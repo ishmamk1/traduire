@@ -1,13 +1,17 @@
 import React, { useState, ChangeEvent } from 'react';
 import axios from 'axios';
+import Translation from './Translation';
 
 const UploadImage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [response, setResponse] = useState<string>('');
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setFile(event.target.files[0]);
+    if (event.target.files && event.target.files[0]) {
+        const selectedFile = event.target.files[0];
+        setFile(selectedFile);
+        setImagePreview(URL.createObjectURL(selectedFile)); // Create a temporary URL for the file
     }
   };
 
@@ -40,8 +44,11 @@ const UploadImage: React.FC = () => {
                 <input type="file" onChange={handleFileChange} />
                 <button onClick={handleUpload}>Upload</button> 
             </div>) : (
+        <>
+        {imagePreview && <img src={imagePreview} alt='Uploaded file'></img>}
         <p>Response: {response}</p>
-        
+        <Translation originalText={response}/>
+        </>
       )}
     </div>
   );
